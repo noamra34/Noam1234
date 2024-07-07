@@ -1,4 +1,4 @@
-pipeline{
+pipeline {
     agent {
         kubernetes {
             yamlFile 'build_pods.yaml'
@@ -6,7 +6,7 @@ pipeline{
         }
     }
 
-    environment{
+    environment {
         DOCKER_IMAGE_NAME = "final_project"
         IMAGE_TAG = "latest"
         HELM_CHART_NAME = "final-pj1"
@@ -14,52 +14,52 @@ pipeline{
         GIT_CREDENTIAL_ID = credentials('git_final_project')
         GIT_REPO = "noamra34/Noam1234"
     }
-    stages{
-        stage("Checkout code"){
-            steps{
+    stages {
+        stage("Checkout code") {
+            steps {
                 checkout scm
             }
         }
 
-        stage("Build Docker Image"){
-            steps{
-                script{
+        stage("Build Docker Image") {
+            steps {
+                script {
                     docker.build("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}")
                 }
             }
         }
 
-        stage("Unit Test"){
-            steps{
-                script{
+        stage("Unit Test") {
+            steps {
+                script { 
                     sh 'pytest --junitxml=test-result.xml'
                 }
-                post{
-                    always{
+                post {
+                    always {
                         junit 'test-result.xml'
                     }
                 }
             }
         }
 
-        stage("Build Helm Package"){
-            steps{
-                script{
+        stage("Build Helm Package") {
+            steps {
+                script 
                     sh 'helm package ./${HELM_CHART_NAME} --version ${IMAGE_TAG}'
-                }
             }
         }
 
-        stage("Psh Artifacts"){
-            when{
+
+        stage("Psh Artifacts") {
+            when {
                 expression {
                     return env.BRANCH_NAME == 'main'
                 }
             }
-            steps{
-                script{
+            steps {
+                script {
                     // Push Image To Docker Hub
-                    docker.withregistry('https://registry.hub.docker.com', 'docker_final_project'){
+                    docker.withregistry('https://registry.hub.docker.com', 'docker_final_project') {
                         docker.image("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}").push()
                     }
 
@@ -69,14 +69,14 @@ pipeline{
             }
         }
 
-        stage("Create Merge request"){
-            when{
+        stage("Create Merge request") {
+            when {
                 exspression {
                     return env.BRANCH_NAME != 'main'
                 }
             }
             steps{
-                script{
+                script {
                     def branchName = env.BRANCH_NAME
                     def mainBranch = "main"
                     def pullRequestTitle = "Merge ${branchName} into ${mainBranch}"
@@ -94,9 +94,9 @@ pipeline{
             }
         }
     }
-    
-    post{
-        failure{
+
+    post {
+        failure {
             emailext subject: "Failed: ${currentBuild.fullDisplayName}",
                         body: "Build failed: ${env.BUILD_URL}",
                         to: "noamra34@gmail.com"
