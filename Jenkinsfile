@@ -45,13 +45,13 @@ pipeline {
         stage("Build Helm Package") {
             steps {
                 script {
-                    sh 'helm package ./${HELM_CHART_NAME} --version ${IMAGE_TAG}'
+                    sh "helm package ./${HELM_CHART_NAME} --version ${IMAGE_TAG}"
                 }
             }
         }
 
 
-        stage("Psh Artifacts") {
+        stage("Push Artifacts") {
             when {
                 expression {
                     return env.BRANCH_NAME == 'main'
@@ -60,12 +60,12 @@ pipeline {
             steps {
                 script {
                     // Push Image To Docker Hub
-                    docker.withregistry('https://registry.hub.docker.com', 'docker_final_project') {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker_final_project') {
                         docker.image("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}").push()
                     }
 
                     // Push Helm Chart To Docker Hub
-                    sh "curl -u $DOCKERHUB_CRED_USR:$DOCKERHUB_CRED_PSW -X PUT -H 'Content-Type: application/octet-stream' --data-binary @final-pj1-${IMAGE_TAG}.tgz https://registry.hub.docker.com/v1/repositories/noam476/tags/${IMAGE_TAG}"
+                    sh "curl -u ${DOCKERHUB_CRED_USR}:${DOCKERHUB_CRED_PSW} -X PUT -H 'Content-Type: application/octet-stream' --data-binary @final-pj1-${IMAGE_TAG}.tgz https://registry.hub.docker.com/v1/repositories/noam476/tags/${IMAGE_TAG}"
                 }
             }
         }
@@ -85,9 +85,9 @@ pipeline {
 
                     sh """
                         curl -u ${GIT_CREDENTIAL_ID_USR}:${GIT_CREDENTIAL_ID_PSW} -X POST -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/${GIT_REPO}/pulls -d '{
-                            "title": "${pullRequestTitle}"
-                            "body": "${pullRequestBody}"
-                            "head": "${branchName}"
+                            "title": "${pullRequestTitle}",
+                            "body": "${pullRequestBody}",
+                            "head": "${branchName}",
                             "base": "${mainBranch}"
                         }'
                     """
