@@ -7,10 +7,8 @@ pipeline{
     }
 
     environment{
-        GITHUB_API_URL = 'https://api.github.com'
-        GIT_CREDENTIALS_ID = credentials('git_final_project')
-        GITHUB_REPO = 'noamra34/Project'
-        DOCKER_IMAGE = 'noam476/final_project'
+        DOCKER_IMAGE_NAME = "final_project"
+        IMAGE_TAG = "latest"
 
     }
     stages{
@@ -20,47 +18,40 @@ pipeline{
             }
         }
 
-        stage("Build docker image"){
+        stage("Build Docker Image"){
             steps{
                 script{
-                    dockerImage = docker.build("${DOCKER_IMAGE}:v1", "--no-cache .")
-
+                    docker.build('${DOCKER_IMAGE_NAME}:${IMAGE_TAG}')
                 }
             }
         }
-        stage("Push docker image"){
-            when {
-                branch 'main'
-            }
+
+        stage("Unit Test"){
             steps{
                 script{
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker_final_project'){
-                        dockerImage.push("latest")
+                    sh 'pytest --junitxml=test-result.xml'
+                }
+                post{
+                    always{
+                        junit 'test-result.xml'
                     }
                 }
             }
         }
-        stage("Create merge request"){
-            when{
-                not {
-                    branch 'main'
-                }
-            }
-            steps{
-                withCredentials([string(credentialsId: 'git_final_project', variable: 'GIT_CREDENTIALS_ID' )]){
-                    script {
-                        def branchName = env.BRANCH_NAME
-                        def pullRequestTitle = "Merge ${branchName} into main"
-                        def pullRequestBody = "Automatically generated merge request for branch ${branchName}"
 
-                        sh """
-                            curl -X POST -H "Authorization: token ${GIT_CREDENTIALS_ID}" \
-                            -d '{ "title": "${pullRequestTitle}", "body": "${pullRequestBody}", "head": "${branchName}, "base": "main" }' \
-                            ${GITHUB_API_URL}/repos/${GITHUB_REPO}/pulls
-                        """
-                    }
+        stage("Build Helm Package"){
+            steps{
+                script{
+                    sh 'helm package ./final-pj1'
                 }
             }
         }
     }
-}
+    
+    post{
+        failure{
+            emailext subject: "Failed: ${currentBuild.fullDisplayName}",
+                        body: "Build failed: ${env.BUILD_URL}",
+                        to: "noamra34@gmail.com"
+        }
+    }
