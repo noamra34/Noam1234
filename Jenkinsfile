@@ -44,8 +44,9 @@ pipeline {
 
         stage("Build Helm Package") {
             steps {
-                script 
+                script {
                     sh 'helm package ./${HELM_CHART_NAME} --version ${IMAGE_TAG}'
+                }
             }
         }
 
@@ -71,7 +72,7 @@ pipeline {
 
         stage("Create Merge request") {
             when {
-                exspression {
+                expression {
                     return env.BRANCH_NAME != 'main'
                 }
             }
@@ -83,7 +84,7 @@ pipeline {
                     def pullRequestBody = "Automatically generated pull request to merge ${branchName} into ${mainBranch}"
 
                     sh """
-                        curl -u GIT_CREDENTIAL_ID_USR:GIT_CREDENTIAL_ID_PSW -X POST -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/${GIT_REPO}/pulls -d '{
+                        curl -u ${GIT_CREDENTIAL_ID_USR}:${GIT_CREDENTIAL_ID_PSW} -X POST -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/${GIT_REPO}/pulls -d '{
                             "title": "${pullRequestTitle}"
                             "body": "${pullRequestBody}"
                             "head": "${branchName}"
