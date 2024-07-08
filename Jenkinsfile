@@ -8,7 +8,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE_NAME = "final_project"
-        IMAGE_TAG = "latest"
+        IMAGE_TAG = "{env.BUILD_NUMBER}"
         HELM_CHART_NAME = "final-pj1"
         DOCKERHUB_CRED = credentials('docker_final_project')
         GIT_CREDENTIAL_ID = credentials('git_final_project')
