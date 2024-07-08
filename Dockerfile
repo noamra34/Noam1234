@@ -5,18 +5,18 @@ FROM python:3.10-slim
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+# RUN apt-get update && apt-get install -y \
+#     build-essential \
+#     libpq-dev \
+#     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements.txt and install dependencies
-COPY requirements.txt requirements.txt
-RUN pip install --default-timeout=100 --no-cache-dir -r requirements.txt
+# COPY requirements.txt requirements.txt
+
 
 # Copy the rest of the application code into the container
 COPY . .
-
+RUN pip install --default-timeout=100 --no-cache-dir -r requirements.txt
 
 # Expose the port the app runs on
 EXPOSE 5000
