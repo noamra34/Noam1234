@@ -8,7 +8,8 @@ pipeline {
 
     environment {
         DOCKER_IMAGE_NAME = "final_project"
-        IMAGE_TAG = "{env.BUILD_NUMBER}"
+        IMAGE_TAG = "latest"
+        CHART_YAML = "./final-pj1/Chart.yaml"
         HELM_CHART_NAME = "final-pj1"
         DOCKERHUB_CRED = credentials('docker_final_project')
         GIT_CREDENTIAL_ID = credentials('git_final_project')
@@ -24,8 +25,7 @@ pipeline {
         stage("Build Docker Image") {
             steps {
                 script {
-                    def formattedTag = "${DOCKER_IMAGE_NAME}-${IMAGE_TAG}".replaceAll("[^a-zA-Z0-9._-]", "_")
-                    dockerImage = docker.build("${DOCKER_IMAGE_NAME}:${formattedTag}")
+                    dockerImage = docker.build("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}")
                     sh 'docker images'
                 }
             }
@@ -49,7 +49,7 @@ pipeline {
         stage("Build Helm Package") {
             steps {
                 script {
-                    sh "helm upgrade mypj-release ./final-pj1 --values ./final-pj1/values.yaml"
+                    sh "sed -i'' -e 's/^version: .*/version: ${BUILD_NUMBER}/'"
                 }
             }
         }
