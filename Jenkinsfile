@@ -94,10 +94,15 @@ pipeline {
             }
         }
         stage("Build Helm Package") {
+            when {
+                expression {
+                    return env.BRANCH_NAME == 'main'
+                }
+            }
             steps {
                 script {
                     
-                    sh "sed -i.bak -e 's/^version: .*/version: ${BUILD_NUMBER}/'"
+                    sh "sed -i.bak -e 's/^version: .*/version: ${BUILD_NUMBER}/' ${CHART_YAML}"
                     sh "helm upgrade ${HELM_CHART_NAME} ${CHART_NAME} --install --set image.tag=${IMAGE_TAG}"
                 }
             }
