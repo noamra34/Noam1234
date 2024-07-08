@@ -97,6 +97,7 @@ pipeline {
             steps {
                 script {
                     sh "cd ./final-pj1"
+                    sh "ls"
                     sh "sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./Chart.yaml"
                     sh "helm upgrade mypj-release ./final-pj1"
                 }
