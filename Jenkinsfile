@@ -88,20 +88,20 @@ pipeline {
                 }
             }
         }
-        // stage("Build Helm Package") {
-        //     when {
-        //         expression {
-        //             return env.BRANCH_NAME == 'main'
-        //         }
-        //     }
-        //     steps {
-        //         script {
+        stage("Build Helm Package") {
+            when {
+                expression {
+                    return env.BRANCH_NAME == 'main'
+                }
+            }
+            steps {
+                script {
                     
-        //             sh "sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./final-pj1/Chart.yaml"
-        //             sh "helm upgrade mypj-release ./final-pj1"
-        //         }
-        //     }
-        // }
+                    sh "sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./final-pj1/Chart.yaml"
+                    sh "helm upgrade mypj-release ./final-pj1"
+                }
+            }
+        }
 
     }
 
