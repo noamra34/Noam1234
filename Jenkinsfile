@@ -98,7 +98,7 @@ pipeline {
                 script {
                     
                     sh "sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./final-pj1/Chart.yaml"
-                    sh "helm upgrade mypj-release ./final-pj1"
+                    sh "helm upgrade --namespace jenkins mypj-release ./final-pj1"
                 }
             }
         }
