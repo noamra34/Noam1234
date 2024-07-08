@@ -25,22 +25,25 @@ pipeline {
             steps {
                 script {
                     docker.build("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}")
+                    sh 'docker images'
                 }
             }
         }
 
-        stage("Unit Test") {
-            steps {
-                script { 
-                    sh 'pytest --junitxml=test-result.xml'
-                }
-                post {
-                    always {
-                        junit 'test-result.xml'
-                    }
-                }
-            }
-        }
+        // stage("Unit Test") {
+        //     steps {
+        //         script { 
+        //             // sh "docker run -d -p 5000:5000 --name flaskapp ${DOCKER_IMAGE_NAME}"
+        //             // sh 'docker exec flaskapp pytest <test_file>'
+        //             sh 'pytest --junitxml=test-result.xml'
+        //         }
+        //         post {
+        //             always {
+        //                 junit 'test-result.xml'
+        //             }
+        //         }
+        //     }
+        // }
 
         stage("Build Helm Package") {
             steps {

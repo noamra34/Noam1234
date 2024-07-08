@@ -9,3 +9,21 @@ spec:
       imagePullPolicy: Always
       securityContext:
         privileged: true
+    
+  #   - name: python-test
+  #     image: python:3.9-slim
+  #     command: ["sleep"]
+  #     args: ["infinity"]
+  #     imagePullPolicy: Always
+  #     securityContext:
+  #       privileged: false
+  #     volumeMounts:
+  #       - name: docker-socket
+  #         mountPath: /var/run/docker.sock
+
+  # volumes:
+  # - name: docker-socket
+  #   hostPath:
+  #     path: /var/run/docker.sock
+  #     type: socket
+  # restartPolicy: Never
