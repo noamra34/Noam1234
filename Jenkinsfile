@@ -84,7 +84,7 @@ pipeline {
                 script {
                     // Push Image To Docker Hub
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_final_project') {
-                        docker.image("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}").push()
+                        docker.image.push()
                     }
 
                     // Push Helm Chart To Docker Hub
