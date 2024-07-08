@@ -82,7 +82,7 @@ pipeline {
                 script {
                     // Push Image To Docker Hub
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_final_project') {
-                        dockerImage.push()
+                        dockerImage.push("latest")
                     }
                 }
             }
