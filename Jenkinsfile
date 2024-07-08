@@ -47,33 +47,8 @@ pipeline {
         //     }
         // }
 
-        stage("Build Helm Package") {
-            steps {
-                script {
-                    sh "sed -i.bak -e 's/^version: .*/version: ${BUILD_NUMBER}/'"
-                }
-            }
-        }
 
-
-        stage("Push Artifacts") {
-            when {
-                expression {
-                    return env.BRANCH_NAME == 'main'
-                }
-            }
-            steps {
-                script {
-                    // Push Image To Docker Hub
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker_final_project') {
-                        docker.image("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}").push()
-                    }
-
-                    // Push Helm Chart To Docker Hub
-                    sh "curl -u ${DOCKERHUB_CRED_USR}:${DOCKERHUB_CRED_PSW} -X PUT -H 'Content-Type: application/octet-stream' --data-binary @final-pj1-${IMAGE_TAG}.tgz https://registry.hub.docker.com/v1/repositories/noam476/tags/${IMAGE_TAG}"
-                }
-            }
-        }
+        
 
         stage("Create Merge request") {
             when {
@@ -99,6 +74,33 @@ pipeline {
                 }
             }
         }
+        stage("Push Artifacts") {
+            when {
+                expression {
+                    return env.BRANCH_NAME == 'main'
+                }
+            }
+            steps {
+                script {
+                    // Push Image To Docker Hub
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker_final_project') {
+                        docker.image("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}").push()
+                    }
+
+                    // Push Helm Chart To Docker Hub
+                    sh "curl -u ${DOCKERHUB_CRED_USR}:${DOCKERHUB_CRED_PSW} -X PUT -H 'Content-Type: application/octet-stream' --data-binary @final-pj1-${IMAGE_TAG}.tgz https://registry.hub.docker.com/v1/repositories/noam476/tags/${IMAGE_TAG}"
+                }
+            }
+        }
+        stage("Build Helm Package") {
+            steps {
+                script {
+                    
+                    sh "sed -i.bak -e 's/^version: .*/version: ${BUILD_NUMBER}/'"
+                }
+            }
+        }
+
     }
 
     // post {
