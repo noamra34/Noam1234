@@ -50,7 +50,7 @@ pipeline {
         stage("Build Helm Package") {
             steps {
                 script {
-                    sh "sed -i'' -e 's/^version: .*/version: ${BUILD_NUMBER}/'"
+                    sh "sed -i.bak -e 's/^version: .*/version: ${BUILD_NUMBER}/'"
                 }
             }
         }
