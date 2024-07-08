@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        DOCKER_IMAGE_NAME = "final-project"
+        DOCKER_IMAGE_NAME = "noam476/final-project"
         IMAGE_TAG = "latest"
         HELM_CHART_NAME = "final-pj1"
         DOCKERHUB_CRED = credentials('docker_final_project')
