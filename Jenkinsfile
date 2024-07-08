@@ -9,7 +9,8 @@ pipeline {
     environment {
         DOCKER_IMAGE_NAME = "final_project"
         IMAGE_TAG = "latest"
-        CHART_YAML = "./final-pj1/Chart.yaml"
+        CHART_NAME = "final-pj1"
+        CHART_YAML = "${CHART_NAME}/Chart.yaml"
         HELM_CHART_NAME = "final-pj1"
         DOCKERHUB_CRED = credentials('docker_final_project')
         GIT_CREDENTIAL_ID = credentials('git_final_project')
