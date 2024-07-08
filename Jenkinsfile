@@ -13,6 +13,7 @@ pipeline {
         DOCKERHUB_CRED = credentials('docker_final_project')
         GIT_CREDENTIAL_ID = credentials('git_final_project')
         GIT_REPO = "noamra34/Noam1234"
+        //hello
     }
     stages {
         stage("Checkout code") {
