@@ -48,7 +48,7 @@ pipeline {
         stage("Build Helm Package") {
             steps {
                 script {
-                    sh "helm package ./${HELM_CHART_NAME} --version ${IMAGE_TAG}"
+                    sh "helm upgrade mypj-release ./final-pj1 --values ./final-pj1/values.yaml"
                 }
             }
         }
@@ -99,11 +99,11 @@ pipeline {
         }
     }
 
-    post {
-        failure {
-            emailext subject: "Failed: ${currentBuild.fullDisplayName}",
-                        body: "Build failed: ${env.BUILD_URL}",
-                        to: "noamra34@gmail.com"
-        }
-    }
+    // post {
+    //     failure {
+    //         emailext subject: "Failed: ${currentBuild.fullDisplayName}",
+    //                     body: "Build failed: ${env.BUILD_URL}",
+    //                     to: "noamra34@gmail.com"
+    //     }
+    // }
 }
