@@ -24,7 +24,8 @@ pipeline {
         stage("Build Docker Image") {
             steps {
                 script {
-                    dockerImage = docker.build("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}")
+                    def formattedTag = "${DOCKER_IMAGE_NAME}-${IMAGE_TAG}".replaceAll("[^a-zA-Z0-9._-]", "_")
+                    dockerImage = docker.build("${DOCKER_IMAGE_NAME}:${formattedTag}")
                     sh 'docker images'
                 }
             }
