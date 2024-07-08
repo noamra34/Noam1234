@@ -9,8 +9,6 @@ pipeline {
     environment {
         DOCKER_IMAGE_NAME = "final_project"
         IMAGE_TAG = "latest"
-        CHART_NAME = "final-pj1"
-        CHART_YAML = "${CHART_NAME}/Chart.yaml"
         HELM_CHART_NAME = "final-pj1"
         DOCKERHUB_CRED = credentials('docker_final_project')
         GIT_CREDENTIAL_ID = credentials('git_final_project')
@@ -84,7 +82,7 @@ pipeline {
                 script {
                     // Push Image To Docker Hub
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_final_project') {
-                        docker.image.push()
+                        dockerImage.push()
                     }
                 }
             }
