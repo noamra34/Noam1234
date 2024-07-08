@@ -86,10 +86,6 @@ pipeline {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_final_project') {
                         docker.image.push()
                     }
-
-                    // Push Helm Chart To Docker Hub
-                    sh "curl -u ${DOCKERHUB_CRED_USR}:${DOCKERHUB_CRED_PSW} -X PUT -H 'Content-Type: application/octet-stream' --data-binary @final-pj1-${IMAGE_TAG}.tgz https://registry.hub.docker.com/v1/repositories/noam476/tags/${IMAGE_TAG}"
-                    
                 }
             }
         }
@@ -102,8 +98,8 @@ pipeline {
             steps {
                 script {
                     
-                    sh "sed -i.bak -e 's/^version: .*/version: ${BUILD_NUMBER}/' ${CHART_YAML}"
-                    sh "helm upgrade ${HELM_CHART_NAME} ${CHART_NAME} --install --set image.tag=${IMAGE_TAG}"
+                    sh "sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./final-pj1/Chart.yaml"
+                    sh "helm upgrade mypj-release ./final-pj1"
                 }
             }
         }
