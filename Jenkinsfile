@@ -47,7 +47,7 @@ pipeline {
         //     }
         // }
 
-        tage("Build Helm Package") {
+        stage("Build Helm Package") {
             when {
                 expression {
                     return env.BRANCH_NAME == 'main'
