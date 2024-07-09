@@ -92,6 +92,7 @@ pipeline {
                         cd ./final-pj1
                         ls
                         sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./Chart.yaml
+                        cat ./Chart.yaml
                         git config user.name "${GIT_HUB_USR}"
                         git config user.email "noamra34@gmail.com"
                         git add Chart.yaml
