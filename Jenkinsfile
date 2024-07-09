@@ -24,11 +24,6 @@ pipeline {
         }
 
         stage("Build Docker Image") {
-            when {
-                expression {
-                    return env.BRANCH_NAME != 'main'
-                }
-            }
             steps {
                 script {
                     dockerImage = docker.build("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}")
