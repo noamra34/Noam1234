@@ -47,25 +47,15 @@ pipeline {
         //     }
         // }
 
-        stage("Build Helm Package") {
+        stage("Update Chart.yaml in Main Branch") {
             when {
+                beforeAgent true
                 expression {
-                    return env.BRANCH_NAME == 'main'
+                    // Check if there's a tag indicating we should proceed
+                    return sh(script: "git tag --list 'update-chart-*'", returnStatus: true) == 0
                 }
             }
-            steps {
-                script {
-                    sh """
-                        cd ./final-pj1
-                        ls
-                        sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./Chart.yaml
-                        cat ./Chart.yaml
-                    """
-
-                }
-            }
-        }
-        
+        }        
 
         stage("Create Merge request") {
             when {
@@ -106,28 +96,27 @@ pipeline {
                 }
             }
         }
-        // stage("Build Helm Package") {
-        //     when {
-        //         expression {
-        //             return env.BRANCH_NAME == 'main'
-        //         }
-        //     }
-        //     steps {
-        //         script {
-        //             sh """
-        //                 cd ./final-pj1
-        //                 ls
-        //                 sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./Chart.yaml
-        //                 git config user.name "${GIT_USER_NAME}"
-        //                 git config user.email "${GIT_USER_EMAIL}"
-        //                 git add Chart.yaml
-        //                 git commit -m "Update Chart version [ci skip]"
-        //                 git push https://${GIT_HUB_USR}:${GIT_CREDENTIAL_ID}@github.com/${GIT_REPO}.git main
-        //             """
+        stage("Build Helm Package") {
+            when {
+                expression {
+                    return env.BRANCH_NAME == 'main'
+                }
+            }
+            steps {
+                script {
+                    sh """
+                        cd ./final-pj1
+                        ls
+                        sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./Chart.yaml
+                        git config user.name "${GIT_USER_NAME}"
+                        git add Chart.yaml
+                        git commit -m "Update Chart version [ci skip]"
+                        git push https://${GIT_HUB_USR}:${GIT_CREDENTIAL_ID}@github.com/${GIT_REPO}.git main
+                    """
 
-        //         }
-        //     }
-        // }
+                }
+            }
+        }
 
     }
 
