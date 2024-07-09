@@ -89,9 +89,12 @@ pipeline {
             steps {
                 script {
                     sh """
-                        ls
+                        cd ${WORKSPACE}
+                        echo "Current working directory: \$(pwd)"
+                        ls -la
                         sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./final-pj1/Chart.yaml
                         cat ./final-pj1/Chart.yaml
+                        git config --global --add safe.directory ${WORKSPACE}
                         git config user.name "${GIT_HUB_USR}"
                         git config user.email "noamra34@gmail.com"
                         git add ./final-pj1/Chart.yaml
@@ -101,9 +104,21 @@ pipeline {
                 }
             }
         }
-
-
     }
+    post {
+        success {
+            script {
+                // Check if the latest commit message contains [ci skip]
+                def skipCI = sh(returnStatus: true, script: "git log -1 --pretty=%B | grep -q '\\[ci skip\\]'") == 0
+                if (skipCI) {
+                    // If [ci skip] is found, set the build result to SUCCESS and stop further execution
+                    currentBuild.result = 'SUCCESS'
+                    error("Skipping build due to [ci skip] in commit message.")
+                }
+            }
+        }
+    }
+}
 
     // post {
     //     failure {
@@ -141,4 +156,3 @@ pipeline {
         //     }
         // }        
 
-}
