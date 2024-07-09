@@ -13,6 +13,7 @@ pipeline {
         DOCKERHUB_CRED = credentials('docker_final_project')
         GIT_CREDENTIAL_ID = credentials('git_final_project')
         GIT_REPO = "noamra34/Noam1234"
+        GIT_HUB_USR = "noamra34"
         //hello
     }
     stages {
@@ -23,6 +24,11 @@ pipeline {
         }
 
         stage("Build Docker Image") {
+            when {
+                expression {
+                    return env.BRANCH_NAME != 'main'
+                }
+            }
             steps {
                 script {
                     dockerImage = docker.build("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}")
@@ -31,23 +37,8 @@ pipeline {
             }
         }
 
-        // stage("Unit Test") {
-        //     steps {
-        //         script { 
-        //             // sh "docker run -d -p 5000:5000 --name flaskapp ${DOCKER_IMAGE_NAME}"
-        //             // sh 'docker exec flaskapp pytest <test_file>'
-        //             sh 'pytest --junitxml=test-result.xml'
-        //         }
-        //         post {
-        //             always {
-        //                 junit 'test-result.xml'
-        //             }
-        //         }
-        //     }
-        // }
-
-
         
+        // 
 
         stage("Create Merge request") {
             when {
@@ -88,18 +79,32 @@ pipeline {
                 }
             }
         }
-        stage("Build Helm Package") {
+        // stage("Build Helm Package") {
+        //     when {
+        //         expression {
+        //             return env.BRANCH_NAME == 'main'
+        //         }
+        //     }
+        stage("Update Chart.yaml in Main Branch") {
             when {
+                beforeAgent true
                 expression {
-                    return env.BRANCH_NAME == 'main'
+                    // Check if we are on the main branch and there's a tag indicating we should proceed
+                    return env.BRANCH_NAME == 'main' && sh(script: "git tag --list 'update-chart-*'", returnStatus: true) == 0
                 }
             }
             steps {
                 script {
-                    sh "cd final-pj1"
-                    sh "ls"
-                    sh "sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./Chart.yaml"
-                    sh "helm upgrade mypj-release ./final-pj1"
+                    sh """
+                        cd ./final-pj1
+                        ls
+                        sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./Chart.yaml
+                        git config user.name "${GIT_USER_NAME}"
+                        git add Chart.yaml
+                        git commit -m "Update Chart version [ci skip]"
+                        git push https://${GIT_HUB_USR}:${GIT_CREDENTIAL_ID}@github.com/${GIT_REPO}.git main
+                    """
+
                 }
             }
         }
@@ -113,4 +118,33 @@ pipeline {
     //                     to: "noamra34@gmail.com"
     //     }
     // }
+    // stage("Unit Test") {
+        //     steps {
+        //         script { 
+        //             // sh "docker run -d -p 5000:5000 --name flaskapp ${DOCKER_IMAGE_NAME}"
+        //             // sh 'docker exec flaskapp pytest <test_file>'
+        //             sh 'pytest --junitxml=test-result.xml'
+        //         }
+        //         post {
+        //             always {
+        //                 junit 'test-result.xml'
+        //             }
+        //         }
+        //     }
+        // }
+        // stage("Update Chart.yaml in Main Branch") {
+        //     when {
+        //         expression {
+        //             return env.BRANCH_NAME == 'main'
+        //         }
+        //     }
+        //     when {
+        //         beforeAgent true
+        //         expression {
+        //             // Check if there's a tag indicating we should proceed
+        //             return sh(script: "git tag --list 'update-chart-*'", returnStatus: true) == 0
+        //         }
+        //     }
+        // }        
+
 }
