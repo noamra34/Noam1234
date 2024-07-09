@@ -24,6 +24,11 @@ pipeline {
         }
 
         stage("Build Docker Image") {
+            when {
+                expression {
+                    return env.BRANCH_NAME != 'main'
+                }
+            }
             steps {
                 script {
                     dockerImage = docker.build("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}")
@@ -32,30 +37,8 @@ pipeline {
             }
         }
 
-        // stage("Unit Test") {
-        //     steps {
-        //         script { 
-        //             // sh "docker run -d -p 5000:5000 --name flaskapp ${DOCKER_IMAGE_NAME}"
-        //             // sh 'docker exec flaskapp pytest <test_file>'
-        //             sh 'pytest --junitxml=test-result.xml'
-        //         }
-        //         post {
-        //             always {
-        //                 junit 'test-result.xml'
-        //             }
-        //         }
-        //     }
-        // }
-
-        stage("Update Chart.yaml in Main Branch") {
-            when {
-                beforeAgent true
-                expression {
-                    // Check if there's a tag indicating we should proceed
-                    return sh(script: "git tag --list 'update-chart-*'", returnStatus: true) == 0
-                }
-            }
-        }        
+        
+        // 
 
         stage("Create Merge request") {
             when {
@@ -96,10 +79,18 @@ pipeline {
                 }
             }
         }
-        stage("Build Helm Package") {
+        // stage("Build Helm Package") {
+        //     when {
+        //         expression {
+        //             return env.BRANCH_NAME == 'main'
+        //         }
+        //     }
+        stage("Update Chart.yaml in Main Branch") {
             when {
+                beforeAgent true
                 expression {
-                    return env.BRANCH_NAME == 'main'
+                    // Check if we are on the main branch and there's a tag indicating we should proceed
+                    return env.BRANCH_NAME == 'main' && sh(script: "git tag --list 'update-chart-*'", returnStatus: true) == 0
                 }
             }
             steps {
@@ -127,4 +118,33 @@ pipeline {
     //                     to: "noamra34@gmail.com"
     //     }
     // }
+    // stage("Unit Test") {
+        //     steps {
+        //         script { 
+        //             // sh "docker run -d -p 5000:5000 --name flaskapp ${DOCKER_IMAGE_NAME}"
+        //             // sh 'docker exec flaskapp pytest <test_file>'
+        //             sh 'pytest --junitxml=test-result.xml'
+        //         }
+        //         post {
+        //             always {
+        //                 junit 'test-result.xml'
+        //             }
+        //         }
+        //     }
+        // }
+        // stage("Update Chart.yaml in Main Branch") {
+        //     when {
+        //         expression {
+        //             return env.BRANCH_NAME == 'main'
+        //         }
+        //     }
+        //     when {
+        //         beforeAgent true
+        //         expression {
+        //             // Check if there's a tag indicating we should proceed
+        //             return sh(script: "git tag --list 'update-chart-*'", returnStatus: true) == 0
+        //         }
+        //     }
+        // }        
+
 }
