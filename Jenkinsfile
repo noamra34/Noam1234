@@ -100,7 +100,9 @@ pipeline {
                         git add ./final-pj1/Chart.yaml
                         git commit -m "Update Chart version [ci skip]"
                         echo ${BRANCH_NAME}
-                        git push https://${GIT_HUB_USR}:${GIT_CREDENTIAL_ID}@github.com/${GIT_REPO}.git main
+                        git fetch origin
+                        git checkout main
+                        git push origin main
                         """
                 }
             }
