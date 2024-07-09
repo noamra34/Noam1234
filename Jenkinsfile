@@ -89,14 +89,11 @@ pipeline {
             steps {
                 script {
                     sh """
-                        cd ./final-pj1
                         ls
-                        sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./Chart.yaml
-                        cat ./Chart.yaml
-                        cd ..
+                        sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./final-pj1/Chart.yaml
+                        cat ./final-pj1/Chart.yaml
                         git config user.name "${GIT_HUB_USR}"
                         git config user.email "noamra34@gmail.com"
-
                         git add ./final-pj1/Chart.yaml
                         git commit -m "Update Chart version [ci skip]"
                         git push https://${GIT_HUB_USR}:${GIT_CREDENTIAL_ID}@github.com/${GIT_REPO}.git main
