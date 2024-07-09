@@ -102,7 +102,7 @@ pipeline {
                         echo ${BRANCH_NAME}
                         git fetch origin
                         git checkout main
-                        git push origin main
+                        git push https://${GIT_HUB_USR}:${GIT_CREDENTIAL_ID}@github.com/${GIT_REPO}.git main
                         """
                 }
             }
