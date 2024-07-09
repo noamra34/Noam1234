@@ -82,10 +82,8 @@ pipeline {
         //     }
         stage("Update Chart.yaml in Main Branch") {
             when {
-                beforeAgent true
                 expression {
-                    // Check if we are on the main branch and there's a tag indicating we should proceed
-                    return env.BRANCH_NAME == 'main' && sh(script: "git tag --list 'update-chart-*'", returnStatus: true) == 0
+                    return env.BRANCH_NAME == 'main'
                 }
             }
             steps {
@@ -95,14 +93,15 @@ pipeline {
                         ls
                         sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./Chart.yaml
                         git config user.name "${GIT_USER_NAME}"
+                        git config user.email "${GIT_USER_EMAIL}"
                         git add Chart.yaml
                         git commit -m "Update Chart version [ci skip]"
                         git push https://${GIT_HUB_USR}:${GIT_CREDENTIAL_ID}@github.com/${GIT_REPO}.git main
                     """
-
                 }
             }
         }
+
 
     }
 
