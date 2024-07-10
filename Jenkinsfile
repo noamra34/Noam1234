@@ -26,10 +26,18 @@ pipeline {
             steps {
                 script {
                     sh "git config --global --add safe.directory /home/jenkins/agent/workspace/final_project_main"
-                    if (sh(script: "git log -1 --pretty=%B | fgrep -ie '[skip ci]' -e '[ci skip]'", returnStatus: true) == 0) {
+                    def ciskip = (sh(script: "git log -1 --pretty=%B | fgrep -ie '[skip ci]' -e '[ci skip]'", returnStatus: true) == 0)
+                    if (ciskip) {
+                        echo "Commit message contains [ci skip] or [skip ci]. Updating ArgoCD and stopping pipeline."
+                        sh "argocd app sync finalproject --wait"
+                        
                         currentBuild.result = 'NOT_BUILT'
                         error 'Aborting because commit message contains [skip ci]'
                     }
+                    else {
+                        echo "No [ci skip] or [skip ci] found. Proceeding with pipeline."
+                    }
+                    
                 }
             }
         }
@@ -122,20 +130,25 @@ pipeline {
             }
         }
     }
-    post {
-        success {
-            script {
-                // Check if the latest commit message contains [ci skip]
-                def skipCI = sh(returnStatus: true, script: "git log -1 --pretty=%B | grep -q '\\[ci skip\\]'") == 0
-                if (!skipCI) {
-                    // Trigger ArgoCD sync using CLI or API
-                    sh "argocd app sync <your-application-name> --wait"
-                } else {
-                    echo "Skipping ArgoCD sync due to [ci skip] in commit message."
-                }
-            }
-        }
-    }
+    // post {
+    //     when{
+    //         expression {
+    //                 return env.BRANCH_NAME == 'main'
+    //             }
+    //     }
+    //     success {
+    //         script {
+    //             // Check if the latest commit message contains [ci skip]
+    //             def skipCI = sh(returnStatus: true, script: "git log -1 --pretty=%B | grep -q '\\[ci skip\\]'") == 0
+    //             if (!skipCI) {
+    //                 // Trigger ArgoCD sync using CLI or API
+    //                 sh "argocd app sync <your-application-name> --wait"
+    //             } else {
+    //                 echo "Skipping ArgoCD sync due to [ci skip] in commit message."
+    //             }
+    //         }
+    //     }
+    // }
     // post {
     //     success {
     //         script {
