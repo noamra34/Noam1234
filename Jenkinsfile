@@ -29,7 +29,7 @@ pipeline {
                     def ciskip = (sh(script: "git log -1 --pretty=%B | fgrep -ie '[skip ci]' -e '[ci skip]'", returnStatus: true) == 0)
                     if (ciskip) {
                         echo "Commit message contains [ci skip] or [skip ci]. Updating ArgoCD and stopping pipeline."
-                        sh "argocd app sync finalproject --wait"
+                        updateArgoCD()
                         
                         currentBuild.result = 'NOT_BUILT'
                         error 'Aborting because commit message contains [skip ci]'
