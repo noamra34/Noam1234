@@ -122,7 +122,20 @@ pipeline {
             }
         }
     }
-
+    post {
+        success {
+            script {
+                // Check if the latest commit message contains [ci skip]
+                def skipCI = sh(returnStatus: true, script: "git log -1 --pretty=%B | grep -q '\\[ci skip\\]'") == 0
+                if (!skipCI) {
+                    // Trigger ArgoCD sync using CLI or API
+                    sh "argocd app sync <your-application-name> --wait"
+                } else {
+                    echo "Skipping ArgoCD sync due to [ci skip] in commit message."
+                }
+            }
+        }
+    }
     // post {
     //     success {
     //         script {
