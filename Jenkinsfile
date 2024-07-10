@@ -14,7 +14,7 @@ pipeline {
         GIT_CREDENTIAL_ID = credentials('git_final_project')
         GIT_REPO = "noamra34/Noam1234"
         GIT_HUB_USR = "noamra34"
-        //hello
+        
     }
     stages {
         stage("Checkout code") {
