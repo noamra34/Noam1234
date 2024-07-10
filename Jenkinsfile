@@ -92,7 +92,6 @@ pipeline {
                         cd ${WORKSPACE}
                         echo "Current working directory: \$(pwd)"
                         ls -la
-                        git checkout main
                         sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./final-pj1/Chart.yaml
                         cat ./final-pj1/Chart.yaml
                         git config --global --add safe.directory ${WORKSPACE}
