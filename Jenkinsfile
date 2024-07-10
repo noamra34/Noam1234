@@ -25,6 +25,7 @@ pipeline {
             }
             steps {
                 script {
+                    sh "git config --global --add safe.directory /home/jenkins/agent/workspace/final_project_main"
                     if (sh(script: "git log -1 --pretty=%B | fgrep -ie '[skip ci]' -e '[ci skip]'", returnStatus: true) == 0) {
                         currentBuild.result = 'NOT_BUILT'
                         error 'Aborting because commit message contains [skip ci]'
