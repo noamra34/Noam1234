@@ -11,7 +11,7 @@ pipeline {
         IMAGE_TAG = "latest"
         HELM_CHART_NAME = "final-pj1"
         DOCKERHUB_CRED = credentials('docker_final_project')
-        GIT_CREDENTIAL_ID = credentials('github_cred_id')
+        GIT_CREDENTIAL_ID = credentials('git_final_project')
         GIT_REPO = "noamra34/Noam1234"
         GIT_HUB_USR = "noamra34"
         //hello
