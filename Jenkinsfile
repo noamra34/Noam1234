@@ -11,7 +11,7 @@ pipeline {
         IMAGE_TAG = "latest"
         HELM_CHART_NAME = "final-pj1"
         DOCKERHUB_CRED = credentials('docker_final_project')
-        GIT_CREDENTIAL_ID = credentials('git_final_project')
+        GIT_CREDENTIAL_ID = credentials('github_cred_id')
         GIT_REPO = "noamra34/Noam1234"
         GIT_HUB_USR = "noamra34"
         
@@ -100,7 +100,7 @@ pipeline {
                         git add ./final-pj1/Chart.yaml
                         git commit -m "Update Chart version [ci skip]"
                         echo ${BRANCH_NAME}
-                        git push https://${GIT_HUB_USR}:${GIT_CREDENTIAL_ID}@github.com/${GIT_REPO}.git HEAD:main
+                        git push https://${GIT_HUB_USR}:${github_cred_id}@github.com/${GIT_REPO}.git HEAD:main
                         """
                 }
             }
