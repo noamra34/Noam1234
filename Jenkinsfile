@@ -92,6 +92,7 @@ pipeline {
                         cd ${WORKSPACE}
                         echo "Current working directory: \$(pwd)"
                         ls -la
+                        git checkout main
                         sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./final-pj1/Chart.yaml
                         cat ./final-pj1/Chart.yaml
                         git config --global --add safe.directory ${WORKSPACE}
@@ -100,7 +101,7 @@ pipeline {
                         git add ./final-pj1/Chart.yaml
                         git commit -m "Update Chart version [ci skip]"
                         echo ${BRANCH_NAME}
-                        git push https://${GIT_HUB_USR}:${GIT_CREDENTIAL_ID}@github.com/${GIT_REPO}.git HEAD:main
+                        git push https://${GIT_HUB_USR}:${GIT_CREDENTIAL_ID}@github.com/${GIT_REPO}.git HEAD:main
                         """
                 }
             }
