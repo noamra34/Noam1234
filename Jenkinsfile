@@ -17,6 +17,21 @@ pipeline {
         //hello
     }
     stages {
+        stage('Run CI?') {
+            when {
+                expression {
+                    return env.BRANCH_NAME == 'main'
+                }
+            }
+            steps {
+                script {
+                    if (sh(script: "git log -1 --pretty=%B | fgrep -ie '[skip ci]' -e '[ci skip]'", returnStatus: true) == 0) {
+                        currentBuild.result = 'NOT_BUILT'
+                        error 'Aborting because commit message contains [skip ci]'
+                    }
+                }
+            }
+        }
         stage("Checkout code") {
             steps {
                 checkout scm
@@ -124,20 +139,6 @@ pipeline {
     //     }
     // }
 
-    
-    // post {
-    //     success {
-    //         script {
-    //             // Check if the latest commit message contains [ci skip]
-    //             def skipCI = sh(returnStatus: true, script: "git log -1 --pretty=%B | grep -q '\\[ci skip\\]'") == 0
-    //             if (skipCI) {
-    //                 // If [ci skip] is found, set the build result to SUCCESS and stop further execution
-    //                 currentBuild.result = 'SUCCESS'
-    //                 error("Skipping build due to [ci skip] in commit message.")
-    //             }
-    //         }
-    //     }
-    // }
 }
 
     // post {
