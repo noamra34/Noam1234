@@ -107,22 +107,22 @@ pipeline {
         }
     }
 
-    post {
-        success {
-            script {
-                def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
-                echo "Commit message: ${commitMessage}"
+    // post {
+    //     success {
+    //         script {
+    //             def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+    //             echo "Commit message: ${commitMessage}"
                 
-                // Check if the commit message contains [ci skip] (case insensitive)
-                def skipCI = commitMessage =~ /(?i)\[ci skip\]/
+    //             // Check if the commit message contains [ci skip] (case insensitive)
+    //             def skipCI = commitMessage =~ /(?i)\[ci skip\]/
                 
-                if (skipCI) {
-                    currentBuild.result = 'SUCCESS'
-                    error("Skipping build due to [ci skip] in commit message.")
-                }
-            }
-        }
-    }
+    //             if (skipCI) {
+    //                 currentBuild.result = 'SUCCESS'
+    //                 error("Skipping build due to [ci skip] in commit message.")
+    //             }
+    //         }
+    //     }
+    // }
 
     
     // post {
