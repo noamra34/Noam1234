@@ -125,11 +125,13 @@ pipeline {
                         git commit -m "Update ${BUILD_NUMBER} Chart version [ci skip]"
                         echo ${BRANCH_NAME}
                         git push "https://${GIT_CREDENTIAL_ID_USR}:${GIT_CREDENTIAL_ID_PSW}@github.com/${GIT_REPO}.git" HEAD:main
+                        kubectl rollout restart deployment/flask-app -n default
                         """
                 }
             }
         }
     }
+
     // post {
     //     when{
     //         expression {
