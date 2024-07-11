@@ -102,6 +102,7 @@ pipeline {
         //             return env.BRANCH_NAME == 'main'
         //         }
         //     }
+        //
         stage("Update Chart.yaml in Main Branch") {
             when {
                 expression {
