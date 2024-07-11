@@ -120,7 +120,7 @@ pipeline {
                         git config user.name "${GIT_HUB_USR}"
                         git config user.email "noamra34@gmail.com"
                         git add ./final-pj1/Chart.yaml
-                        git commit -m "Update Chart version [ci skip]"
+                        git commit -m "Update ${BUILD_NUMBER} Chart version [ci skip]"
                         echo ${BRANCH_NAME}
                         git push "https://${GIT_CREDENTIAL_ID_USR}:${GIT_CREDENTIAL_ID_PSW}@github.com/${GIT_REPO}.git" HEAD:main
                         """
