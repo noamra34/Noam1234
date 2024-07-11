@@ -14,7 +14,7 @@ pipeline {
         GIT_CREDENTIAL_ID = credentials('git_final_project')
         GIT_REPO = "noamra34/Noam1234"
         GIT_HUB_USR = "noamra34"
-        //hello
+        
     }
     stages {
         stage('Run CI?') {
@@ -102,6 +102,7 @@ pipeline {
         //             return env.BRANCH_NAME == 'main'
         //         }
         //     }
+        //
         stage("Update Chart.yaml in Main Branch") {
             when {
                 expression {
