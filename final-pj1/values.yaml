@@ -2,4 +2,4 @@ appName: flask-app
 
 image:
   name: noam476/final_project
-  tag: 83
+  tag: 88
