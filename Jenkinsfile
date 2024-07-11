@@ -48,7 +48,7 @@ pipeline {
         stage("Build Docker Image") {
             steps {
                 script {
-                    dockerImage = docker.build("${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}")
+                    dockerImage = docker.build("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}")
                     sh 'docker images'
                 }
             }
@@ -91,7 +91,7 @@ pipeline {
                 script {
                     // Push Image To Docker Hub
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_final_project') {
-                        dockerImage.push("${BUILD_NUMBER}")
+                        dockerImage.push("latest")
                     }
                 }
             }
