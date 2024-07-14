@@ -1,0 +1,11 @@
+groups:
+- name: AppPodAlerts
+  rules:
+  - alert: AppPodsBelowThreshold
+    expr: count(kube_pod_info{namespace="default", pod=~"your-app-pod-prefix-.*"}) < 3
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Application pods below threshold"
+      description: "The number of application pods has dropped below 3."
