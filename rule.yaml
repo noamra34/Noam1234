@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: app-pod-down-alert
+  namespace: monitoring
+spec:
+  groups:
+  - name: app-pod-down-rules
+    rules:
+    - alert: AppPodDown
+      expr: kube_pod_status_phase{namespace="default", phase="Failed"} > 0
+      for: 3m
+      labels:
+        severity: critical
+      annotations:
+        summary: "App Pod is down"
+        description: "One or more of the application pods in the namespace 'default' are down for more than 5 minutes."
