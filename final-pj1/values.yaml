@@ -1,5 +1,5 @@
 appName: flask-app
 
 image:
-  name: noam476/final_project
+  name: noam476/final-project
   tag: latest
