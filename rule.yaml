@@ -1,11 +1,17 @@
-groups:
-- name: AppPodAlerts
-  rules:
-  - alert: AppPodsBelowThreshold
-    expr: count(kube_pod_info{namespace="default", pod=~"your-app-pod-prefix-.*"}) < 3
-    for: 5m
-    labels:
-      severity: critical
-    annotations:
-      summary: "Application pods below threshold"
-      description: "The number of application pods has dropped below 3."
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: app-pod-alert-rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: app.rules
+    rules:
+    - alert: PodCountBelowThreshold
+      expr: count(kube_pod_status_ready{condition="true", namespace="default", pod=~"flask-app-.*"}) < 3
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Pod count for the Flask app is below the threshold"
+        description: "The number of ready pods for the Flask app is below the configured threshold of 3 pods."
