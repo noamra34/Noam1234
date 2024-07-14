@@ -5,7 +5,7 @@ pipeline {
             defaultContainer 'ez-docker-helm-build'
         }
     }
-
+//hello
     environment {
         DOCKER_IMAGE_NAME = "noam476/final-project"
         IMAGE_TAG = "latest"
