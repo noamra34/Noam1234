@@ -115,8 +115,6 @@ pipeline {
                         cd ${WORKSPACE}
                         echo "Current working directory: \$(pwd)"
                         ls -la
-                        helm init --client-only
-                        helm repo update
                         sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./final-pj1/Chart.yaml
                         sed -i 's/^  tag: .*/  tag: ${BUILD_NUMBER}/' ./final-pj1/values.yaml
                         cat ./final-pj1/Chart.yaml
@@ -128,7 +126,6 @@ pipeline {
                         git commit -m "Update ${BUILD_NUMBER} Chart version [ci skip]"
                         echo ${BRANCH_NAME}
                         git push "https://${GIT_CREDENTIAL_ID_USR}:${GIT_CREDENTIAL_ID_PSW}@github.com/${GIT_REPO}.git" HEAD:main
-                        helm upgrade --install mypj-release ./final-pj1 --namespace default --wait
                         """
                 }
             }
