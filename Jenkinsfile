@@ -118,7 +118,6 @@ pipeline {
                         sed -i 's/^version: .*/version: ${BUILD_NUMBER}/' ./final-pj1/Chart.yaml
                         
                         cat ./final-pj1/Chart.yaml
-                        //
                         git config --global --add safe.directory ${WORKSPACE}
                         git config user.name "${GIT_HUB_USR}"
                         git config user.email "noamra34@gmail.com"

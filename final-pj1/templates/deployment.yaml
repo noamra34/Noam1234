@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.appName }}
+  name: flask-app
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: {{ .Values.appName }}
+      app: flask-app
   template:
     metadata:
       labels:
-        app: {{ .Values.appName }}
+        app: flask-app
     spec:
       containers:
         - name: flask-container
-          image: "{{ .Values.image.name }}:{{ .Values.image.tag }}"
+          image: "noam476/final-project:23"
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
