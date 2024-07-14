@@ -48,7 +48,7 @@ pipeline {
         stage("Build Docker Image") {
             steps {
                 script {
-                    dockerImage = docker.build("${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}")
+                    dockerImage = docker.build("${DOCKER_IMAGE_NAME}:latest")
                     sh 'docker images'
                 }
             }
