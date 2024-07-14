@@ -132,6 +132,7 @@ pipeline {
             }
         }
     }
+    ///
 // sed -i 's/^  tag: .*/  tag: ${BUILD_NUMBER}/' ./final-pj1/values.yaml
 //cat ./final-pj1/values.yaml
 // git add ./final-pj1/values.yaml
