@@ -19,5 +19,9 @@ spec:
           ports:
             - containerPort: 5000
           env:
-            - name: MONGO_URI
-              value: "mongodb://super:noam123456789@mongodb:27017/supermarket"
+            - name: DB_USR
+              value: super
+            - name: DB_PSW
+              value: noam123456789
+            - name: DB_HOST
+              value: mongodb
