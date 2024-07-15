@@ -7,12 +7,12 @@ from os import environ
 import bcrypt
 from dotenv import load_dotenv
 import datetime
-
+#
 app = Flask(__name__)
 load_dotenv()
 DB_USR = environ.get('DB_USR')
 DB_PSW = environ.get('DB_PSW')
-DB_HOST = environ.get('DB_TY')
+DB_HOST = environ.get('DB_HOST')
 
 MONGO_URI = (f"mongodb://{DB_USR}:{DB_PSW}@{DB_HOST}:27017/supermarket")
 client = MongoClient(MONGO_URI)
