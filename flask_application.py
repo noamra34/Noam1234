@@ -1,6 +1,7 @@
-from flask import Flask, request, jsonify, render_template, redirect, session
+from flask import Flask, request, jsonify, render_template, redirect,url_for, session
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_session import Session
 from pymongo import MongoClient 
 import bcrypt
 import datetime
@@ -9,7 +10,14 @@ app = Flask(__name__)
 MONGO_URI = "mongodb://super:noam123456789@mongodb:27017/supermarket"
 client = MongoClient(MONGO_URI)
 db = client.supermarket
-jwt = JWTManager(app)
+
+#config the session to the db
+app.config["SESSION_TYPE"] = "mongodb"
+app.config["SESSION_MONGODB"] = MongoClient
+app.config["SESSION_MONGODB_DB"] = "supermarket"
+app.config["SESSION_MONGODB_COLLECT"] = "sessions"
+Session(app)
+
 
 @app.route('/')
 def index():
@@ -41,7 +49,9 @@ def signup():
         hashed_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
         db.users.insert_one({'username': username, 'password': hashed_password, 'email': email})
         
-        return redirect('/')
+        #store the user in session
+        session["username"] = username
+        return redirect(url_for('products'))
     return render_template('signup.html')
 
 @app.route('/login', methods=['GET','POST'])
