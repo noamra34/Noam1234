@@ -13,7 +13,7 @@ db = client.supermarket
 
 #config the session to the db
 app.config["SESSION_TYPE"] = "mongodb"
-app.config["SESSION_MONGODB"] = MongoClient
+app.config["SESSION_MONGODB"] = client
 app.config["SESSION_MONGODB_DB"] = "supermarket"
 app.config["SESSION_MONGODB_COLLECT"] = "sessions"
 Session(app)
