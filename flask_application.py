@@ -2,12 +2,19 @@ from flask import Flask, request, jsonify, render_template, redirect,url_for, se
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_session import Session
-from pymongo import MongoClient 
+from pymongo import MongoClient
+from os import environ 
 import bcrypt
+from dotenv import load_dotenv
 import datetime
 
 app = Flask(__name__)
-MONGO_URI = "mongodb://super:noam123456789@mongodb:27017/supermarket"
+load_dotenv()
+DB_USR = environ.get('DB_USR')
+DB_PSW = environ.get('DB_PSW')
+DB_HOST = environ.get('DB_TY')
+
+MONGO_URI = (f"mongodb://{DB_USR}:{DB_PSW}@{DB_HOST}:27017/supermarket")
 client = MongoClient(MONGO_URI)
 db = client.supermarket
 
@@ -22,16 +29,6 @@ Session(app)
 @app.route('/')
 def index():
     return render_template('index.html')
-
-# @app.route('/profile')
-# def profile():
-#     username = session.get('username')
-#     if username:
-#         # Query user data from the database based on user_id
-#         user = db.users.find_one({'username': username})
-#         if user:
-#             return render_template('hello.html', user=user)
-#     return redirect('/')
 
 @app.route('/invalid')
 def invalid():
@@ -64,7 +61,8 @@ def login():
         if user is not None:
             if bcrypt.checkpw(password.encode('utf-8'), user['password']):
                 print("connected successfully")
-                return redirect('/')
+                session['username'] = username
+                return redirect(url_for('products'))
             else:
                 return redirect('/invalid')
         return redirect('/signup')
@@ -72,10 +70,34 @@ def login():
 
 @app.route('/products', methods=['GET'])
 def products():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    username = session['username']
     products_cursor = db.products.find({}, {"product_name": 1,'price': 1,"category": 1, "_id": 0})  # Fetch only product_name field
     products_list = [product for product in products_cursor]
     print("Fetched products:", products_list)
-    return render_template('/products.html', products=products_list)
+    return render_template('products.html', products=products_list, user=username)
+
+@app.route('/add_products', methods=['POST'])
+def add_products():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    current_user = session['username']
+    selected_products = request.form.getlist('selected_products')
+
+    if not selected_products:
+        return jsonify({"error": "No products selected"}), 400
+    
+    user = db.users.find_one({'username': current_user})
+    if user: 
+        total_amount = 0
+        product_details = []
+        for product_name in selected_products:
+            product = db.products.find_one({"product_name": product_name}, {"product_name":1, "price":1, "_id":0})
+            if product:
+                product_details.append(product)
+                total_amount += product['price']
+    
 
 # @app.route('/submit', methods=['POST'])
 # @jwt_required()
