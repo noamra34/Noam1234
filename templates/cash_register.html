@@ -1,0 +1,63 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash Register</title>
+    <link rel="stylesheet" href="/static/cash_register.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Cash Register</h1>
+        <div class="cart">
+            <h2>Products in Cart</h2>
+            {% if products %}
+                <ul>
+                    {% for product in products %}
+                        <li>
+                            <span class="product-name">{{ product.name }}</span>
+                            <span class="product-quantity">Quantity: {{ product.quantity }}</span>
+                            <span class="product-price">Price: ${{ product.price }}</span>
+                            <span class="product-total">Total: ${{ product.price * product.quantity }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <div class="total-amount">
+                    <h3>Total Amount: ${{ total_amount }}</h3>
+                </div>
+            {% else %}
+                <p>No products in the cart.</p>
+            {% endif %}
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash Register</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Cash Register</h1>
+        <div class="cart">
+            <h2>Products in Cart</h2>
+            <ul>
+                {% for product in products %}
+                    <li>
+                        <strong>Product Name:</strong> {{ product.name }} <br>
+                        <strong>Product Price:</strong> ${{ product.price }} <br>
+                        <strong>Quantity:</strong> {{ product.quantity }}
+                    </li>
+                {% endfor %}
+            </ul>
+            <h3>Total Amount: ${{ total_amount }}</h3>
+            <form action="{{ url_for('logout') }}" method="post">
+              <button type="submit">Sign Out</button>
+        </div>
+    </div>
+</body>
+</html>
+
+

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -39,7 +39,7 @@
     <h1>Products</h1>
     <form action="/submit" method="post">
         <div class="product-container">
-            <!-- Dynamically insert product items -->
+            
             {% for product in products %}
             <div class="product">
                 <div class="product-name">{{ product.product_name }}</div>
@@ -57,4 +57,32 @@
         <button type="submit">Cash register</button>
     </form>
 </body>
+</html> -->
+
+<!-- products.html -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link rel="stylesheet" href="/static/products.css">
+</head>
+<body>
+    <h1>Products</h1>
+    <form method="POST" action="{{ url_for('add_products') }}">
+        {% for product in products %}
+            <div>
+                <input type="checkbox" name="quantity_{{ product._id }}" value="1">
+                <label>{{ product.name }} - ${{ product.price }}</label>
+            </div>
+        {% endfor %}
+        <button type="submit">Add to Cart</button>
+    </form>
+</body>
 </html>
+
+
+
