@@ -54,18 +54,17 @@ pipeline {
             }
         }
 
-        stage("Run Tests") {
-            steps{
-                script{
-                    docker.image("${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}").inside {
-                        sh 'python -m pytest tests/test_pytest.py --junitxml=test-reports/pytest-result.xml'
-                    }
+        stage('Run tests') {
+            steps {
+                script {
+                    // Run pytest and generate XML report
+                    sh """
+                        ${PYTHON_BIN}/pip install pytest
+                        ${PYTHON_BIN}/python -m pytest tests/test_pytest.py --junitxml=test-reports/pytest-result.xml
+                       """
                 }
-            }
-            post{
-                always{
-                    junit 'test-reports/pytest-result.xml'
-                }
+                // Archive the test results for Jenkins to display
+                junit 'test-reports/pytest-result.xml'
             }
         }
         
