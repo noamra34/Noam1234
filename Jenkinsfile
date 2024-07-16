@@ -44,6 +44,18 @@ pipeline {
                 checkout scm
             }
         }
+        stage("Run Tests") {
+            steps{
+                script{
+                    sh 'pytest tests/test_pytest.py --junitxml=test-reports/pytest-result.xml'
+                }
+            }
+            post{
+                always{
+                    junit 'test-reports/pytest-result.xml'
+                }
+            }
+        }
 
         stage("Build Docker Image") {
             steps {
@@ -91,7 +103,7 @@ pipeline {
                 script {
                     // Push Image To Docker Hub
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_final_project') {
-                        dockerImage.push("${BUILD_NUMBER}")
+                        dockerImage.push("1.0.${BUILD_NUMBER}")
                     }
                 }
             }
