@@ -57,7 +57,9 @@ pipeline {
         stage("Run Tests") {
             steps{
                 script{
-                    sh 'pytest tests/test_pytest.py --junitxml=test-reports/pytest-result.xml'
+                    docker.image("${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}").inside {
+                        sh 'python -m pytest tests/test_pytest.py --junitxml=test-reports/pytest-result.xml'
+                    }
                 }
             }
             post{
