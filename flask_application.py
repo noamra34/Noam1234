@@ -7,8 +7,10 @@ from os import environ
 import bcrypt
 from dotenv import load_dotenv
 import datetime
+from bson.objectid import ObjectId
 #
 app = Flask(__name__)
+app.secret_key = '82e63eb02753a3de2ce847169de8e62174d36422b64ab80b'
 load_dotenv()
 DB_USR = environ.get('DB_USR')
 DB_PSW = environ.get('DB_PSW')
@@ -34,22 +36,48 @@ def index():
 def invalid():
     return render_template('invalide.html')
 
-@app.route('/signup', methods=['GET','POST'])
+# @app.route('/signup', methods=['GET','POST'])
+# def signup():
+#     if request.method == 'POST':
+#         username = request.form.get('username')
+#         password = request.form.get('password')
+#         email = request.form.get('email')
+#         if (not (username and password and email)) is None:
+#             return render_template('signup.html', message="all fields are required")
+#         hashed_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
+#         user_id = db.users.insert_one({'username': username, 'password': hashed_password, 'email': email})
+        
+#         #store the user in session
+#         session["user_id"] = str(user_id.inserted_id)
+#         session["username"] = username
+#         return redirect(url_for('products'))
+#     return render_template('signup.html')
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
         email = request.form.get('email')
-        selected_products = []
-        if (not (username and password and email)) and selected_products is None:
-            return render_template('signup.html', message="all fields are required")
-        hashed_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
-        db.users.insert_one({'username': username, 'password': hashed_password, 'email': email})
+        phone_number = request.form.get('phone_number')
+        if not (username and password and email):
+            return render_template('signup.html', message="All fields are required")
         
-        #store the user in session
+        existing_user = db.users.find_one({'email': email})
+        if existing_user:
+            return render_template('signup.html', message="Email already registered. Please use a different email.")
+        
+        hashed_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
+        user_id = db.users.insert_one({'username': username, 'password': hashed_password, 'email': email, 'phone_number': phone_number, 'cart': []})
+        
+        # Store the user in session
+        session["user_id"] = str(user_id.inserted_id)
         session["username"] = username
+        
+        # Redirect to the 'products' endpoint
         return redirect(url_for('products'))
+    
     return render_template('signup.html')
+
 
 @app.route('/login', methods=['GET','POST'])
 def login():
@@ -61,42 +89,103 @@ def login():
         if user is not None:
             if bcrypt.checkpw(password.encode('utf-8'), user['password']):
                 print("connected successfully")
+                session['user_id'] = str(user['_id'])
                 session['username'] = username
                 return redirect(url_for('products'))
             else:
-                return redirect('/invalid')
-        return redirect('/signup')
-    return render_template('/login.html')
+                return redirect('invalid')
+        return redirect('signup')
+    return render_template('login.html')
 
+#products
 @app.route('/products', methods=['GET'])
 def products():
     if 'username' not in session:
         return redirect(url_for('login'))
     username = session['username']
-    products_cursor = db.products.find({}, {"product_name": 1,'price': 1,"category": 1, "_id": 0})  # Fetch only product_name field
+    products_cursor = db.products.find({}, {"name": 1,'price': 1,"kind": 1, "_id": 1})  # Fetch only product_name field
     products_list = [product for product in products_cursor]
     print("Fetched products:", products_list)
+
     return render_template('products.html', products=products_list, user=username)
 
 @app.route('/add_products', methods=['POST'])
 def add_products():
     if 'username' not in session:
         return redirect(url_for('login'))
-    current_user = session['username']
-    selected_products = request.form.getlist('selected_products')
-
-    if not selected_products:
-        return jsonify({"error": "No products selected"}), 400
     
-    user = db.users.find_one({'username': current_user})
-    if user: 
-        total_amount = 0
-        product_details = []
-        for product_name in selected_products:
-            product = db.products.find_one({"product_name": product_name}, {"product_name":1, "price":1, "_id":0})
+
+    current_user_id = session['user_id']
+    cart = []
+    products_added = None
+    alist = request.form.items()
+    for product_id, quantity  in alist:
+        if product_id.startswith('quantity_') and int(quantity) > 0:
+            product_id = product_id.replace('quantity_','')
+            product = db.products.find_one({"_id": ObjectId(product_id)})           
             if product:
-                product_details.append(product)
-                total_amount += product['price']
+                product_price = product.get('price', 1)
+                product['quantity'] = int(quantity)
+                cart.append({"product_id": product_id, "quantity": product['quantity'], "price": product_price})
+                products_added = True
+    
+    if not products_added:
+        return jsonify({"error": "No products selected"}), 400
+        
+    #update the cart collection:
+    db.users.update_one(
+        {'_id': ObjectId(current_user_id)},
+        {'$set': {'cart':cart}},
+        upsert=True
+    )
+    return redirect(url_for('cash_register'))
+
+
+@app.route('/cash_register')
+def cash_register():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    current_user_id = session['user_id']
+    
+    # Fetch cart details from the database
+    user_cart = db.users.find_one({'_id': ObjectId(current_user_id)})
+    if not user_cart or 'cart' not in user_cart:
+        return render_template('cash_register.html', products=[], total_amount=0)
+    
+    cart_products = user_cart['cart']
+    products_details = []
+    total_amount = 0
+    
+    # Retrieve details for each product in the cart
+    for item in cart_products:
+        product_id = item['product_id']
+        quantity = item.get('quantity', 1)  # Default to 1 if quantity is not specified
+        
+        # Fetch product details from the products collection
+        product_details = db.products.find_one({"_id": ObjectId(product_id)})
+        if product_details:
+            product_name = product_details.get('name', 'Unknown Product')
+            product_price = product_details.get('price', 0)
+            total_amount += product_price * quantity
+            
+            # Add product details to the list
+            products_details.append({
+                'product_id': product_id,
+                'name': product_name,
+                'price': product_price,
+                'quantity': quantity
+            })
+    
+    return render_template('cash_register.html', products=products_details, total_amount=total_amount)
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()  # Clear all session variables
+    return redirect(('/'))
+
+    
+            
     
 
 # @app.route('/submit', methods=['POST'])
