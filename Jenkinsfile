@@ -58,10 +58,7 @@ pipeline {
             steps {
                 script {
                     // Run pytest and generate XML report
-                    sh """
-                        ${PYTHON_BIN}/pip install pytest
-                        ${PYTHON_BIN}/python -m pytest tests/test_pytest.py --junitxml=test-reports/pytest-result.xml
-                       """
+                    sh "python -m pytest tests/test_pytest.py --junitxml=test-reports/pytest-result.xml"
                 }
                 // Archive the test results for Jenkins to display
                 junit 'test-reports/pytest-result.xml'
