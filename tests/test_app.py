@@ -1,5 +1,5 @@
 import pytest
-from flask_application import app, client as production_client
+from flask_application import app
 from mongomock import MongoClient as MockClient
 
 @pytest.fixture

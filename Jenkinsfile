@@ -48,29 +48,29 @@ pipeline {
         stage("Build Docker Image") {
             steps {
                 script {
-                    dockerImage = docker.build("${DOCKER_IMAGE_NAME}:1.0${BUILD_NUMBER}")
+                    dockerImage = docker.build("${DOCKER_IMAGE_NAME}:1.0.${BUILD_NUMBER}")
                     sh 'docker images'
                 }
             }
         }
 
-        // stage("Run Unit Tests") {
-        //     steps {
-        //         script {
-        //             dockerImage.inside {
-        //                 sh """
-        //                     ls
-        //                     PYTHONPATH=./flask_application pytest tests/ --junitxml=test-result.xml
-        //                 """
-        //             }
-        //         }
-        //     }
-        //     post {
-        //         always {
-        //             junit 'test-result.xml'
-        //         }
-        //     }
-        // }
+        stage("Run Unit Tests") {
+            steps {
+                script {
+                    dockerImage.inside {
+                        sh """
+                            ls
+                            pytest tests/ --junitxml=test-result.xml
+                        """
+                    }
+                }
+            }
+            post {
+                always {
+                    junit 'test-result.xml'
+                }
+            }
+        }
 
 
         stage("Create Merge request") {
