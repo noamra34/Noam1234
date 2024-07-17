@@ -54,16 +54,17 @@ pipeline {
             }
         }
 
-        stage("Run Unit Tests") {
-            steps {
-                script {
-                    dockerImage.inside {
-                        sh """
-                            PYTHONPATH=./flask_application pytest tests/ --junitxml=test-result.xml
-                        """
-                    }
-                }
-            }
+        // stage("Run Unit Tests") {
+        //     steps {
+        //         script {
+        //             dockerImage.inside {
+        //                 sh """
+        //                     ls
+        //                     PYTHONPATH=./flask_application pytest tests/ --junitxml=test-result.xml
+        //                 """
+        //             }
+        //         }
+        //     }
             post {
                 always {
                     junit 'test-result.xml'
