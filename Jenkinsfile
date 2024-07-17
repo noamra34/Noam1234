@@ -58,7 +58,9 @@ pipeline {
             steps {
                 script {
                     dockerImage.inside {
-                        sh 'pytest tests/ --junitxml=test-result.xml'
+                        sh """
+                            PYTHONPATH=./flask_application pytest tests/ --junitxml=test-result.xml
+                        """
                     }
                 }
             }
