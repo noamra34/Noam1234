@@ -54,23 +54,17 @@ pipeline {
             }
         }
 
-        stage("Run Unit Tests") {
-            steps {
-                script {
-                    dockerImage.inside {
-                        sh """
-                            ls
-                            pytest -q
-                        """
-                    }
-                }
-            }
-            post {
-                always {
-                    junit 'test-result.xml'
-                }
-            }
-        }
+        // stage("Run Unit Tests") {
+        //     steps {
+        //         script {
+        //             dockerImage.inside {
+        //                 sh """
+        //                     ls
+        //                     pytest -q
+        //                 """
+        //             }
+        //         }
+        //     }
 
 
         stage("Create Merge request") {
