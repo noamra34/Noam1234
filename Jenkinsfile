@@ -60,7 +60,7 @@ pipeline {
                     dockerImage.inside {
                         sh """
                             ls
-                            pytest tests/ --junitxml=test-result.xml
+                            pytest -q
                         """
                     }
                 }

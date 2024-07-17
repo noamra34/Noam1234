@@ -8,25 +8,26 @@ import bcrypt
 from dotenv import load_dotenv
 import datetime
 from bson.objectid import ObjectId
+import mongomock
 #
-app = Flask(__name__)
-app.secret_key = '82e63eb02753a3de2ce847169de8e62174d36422b64ab80b'
 load_dotenv()
 DB_USR = environ.get('DB_USR')
 DB_PSW = environ.get('DB_PSW')
 DB_HOST = environ.get('DB_HOST')
-
+DB_NAME = environ.get('DB_NAME')
+SESSION_KEY = environ.get('SESSION_KEY')
 MONGO_URI = (f"mongodb://{DB_USR}:{DB_PSW}@{DB_HOST}:27017/supermarket")
 client = MongoClient(MONGO_URI)
 db = client.supermarket
-
+app = Flask(__name__)
+is_testing = True
+if is_testing:
+    app.config["SESSION_TYPE"] = "mongodb"
+    app.config["SESSION_MONGODB"] = client
+    app.config["SESSION_MONGODB_DB"] = DB_NAME
+    app.config["SESSION_MONGODB_COLLECT"] = "sessions"
+    Session(app)     
 #config the session to the db
-app.config["SESSION_TYPE"] = "mongodb"
-app.config["SESSION_MONGODB"] = client
-app.config["SESSION_MONGODB_DB"] = "supermarket"
-app.config["SESSION_MONGODB_COLLECT"] = "sessions"
-Session(app)
-
 
 @app.route('/')
 def index():
@@ -36,22 +37,6 @@ def index():
 def invalid():
     return render_template('invalide.html')
 
-# @app.route('/signup', methods=['GET','POST'])
-# def signup():
-#     if request.method == 'POST':
-#         username = request.form.get('username')
-#         password = request.form.get('password')
-#         email = request.form.get('email')
-#         if (not (username and password and email)) is None:
-#             return render_template('signup.html', message="all fields are required")
-#         hashed_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
-#         user_id = db.users.insert_one({'username': username, 'password': hashed_password, 'email': email})
-        
-#         #store the user in session
-#         session["user_id"] = str(user_id.inserted_id)
-#         session["username"] = username
-#         return redirect(url_for('products'))
-#     return render_template('signup.html')
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -184,44 +169,44 @@ def logout():
     session.clear()  # Clear all session variables
     return redirect(('/'))
 
-    
             
-    
+                    
+            
 
-# @app.route('/submit', methods=['POST'])
-# @jwt_required()
-# def submit():
-#     current_user_id = get_jwt_identity()
-#     selected_product_ids = request.form.getlist('selected_products')
-    
-#     # Retrieve user document from MongoDB
-#     user = db.users.find_one({'_id': ObjectId(current_user_id)})
-    
-#     if not user:
-#         return jsonify({'msg': 'User not found'}), 404
-    
-#     selected_products = []
-#     total_price = 0.0
-    
-#     # Fetch details of selected products from MongoDB
-#     for product_id in selected_product_ids:
-#         product = db.products.find_one({'_id': ObjectId(product_id)})
-#         if product:
-#             selected_products.append({
-#                 'product_name': product.get('product_name'),
-#                 'price': product.get('price'),
-#                 'category': product.get('category')
-#             })
-#             total_price += float(product.get('price', 0.0))
-    
-#     # Update selected_products field in user document
-#     db.users.update_one({'_id': ObjectId(current_user_id)}, {'$set': {'selected_products': selected_products}})
-    
-#     return render_template('submit.html', selected_products=selected_products, total_price=total_price)
+        # @app.route('/submit', methods=['POST'])
+        # @jwt_required()
+        # def submit():
+        #     current_user_id = get_jwt_identity()
+        #     selected_product_ids = request.form.getlist('selected_products')
+            
+        #     # Retrieve user document from MongoDB
+        #     user = db.users.find_one({'_id': ObjectId(current_user_id)})
+            
+        #     if not user:
+        #         return jsonify({'msg': 'User not found'}), 404
+            
+        #     selected_products = []
+        #     total_price = 0.0
+            
+        #     # Fetch details of selected products from MongoDB
+        #     for product_id in selected_product_ids:
+        #         product = db.products.find_one({'_id': ObjectId(product_id)})
+        #         if product:
+        #             selected_products.append({
+        #                 'product_name': product.get('product_name'),
+        #                 'price': product.get('price'),
+        #                 'category': product.get('category')
+        #             })
+        #             total_price += float(product.get('price', 0.0))
+            
+        #     # Update selected_products field in user document
+        #     db.users.update_one({'_id': ObjectId(current_user_id)}, {'$set': {'selected_products': selected_products}})
+            
+        #     return render_template('submit.html', selected_products=selected_products, total_price=total_price)
 
 
 
-    
+            
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port="5000", debug=True)
 
