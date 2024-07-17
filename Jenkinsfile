@@ -58,7 +58,7 @@ pipeline {
             steps {
                 script {
                     dockerImage.inside {
-                        sh 'pytest --junitxml=test-result.xml'
+                        sh 'pytest tests/ --junitxml=test-result.xml'
                     }
                 }
             }
