@@ -54,7 +54,20 @@ pipeline {
             }
         }
 
-
+        stage("Run Unit Tests") {
+            steps {
+                script {
+                    dockerImage.inside {
+                        sh 'pytest --junitxml=test-result.xml'
+                    }
+                }
+            }
+            post {
+                always {
+                    junit 'test-result.xml'
+                }
+            }
+        }
 
 
         stage("Create Merge request") {
