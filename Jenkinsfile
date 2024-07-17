@@ -132,7 +132,7 @@ pipeline {
                         echo "Current working directory: \$(pwd)"
                         ls -la
                         sed -i 's/^version: .*/version: 1.0.${BUILD_NUMBER}/' ./final-pj1/Chart.yaml
-                        sed -i 's/^  tag: .*/  tag: ${BUILD_NUMBER}/' ./final-pj1/values.yaml
+                        sed -i 's/^  tag: .*/  tag: 1.0.${BUILD_NUMBER}/' ./final-pj1/values.yaml
                         cat ./final-pj1/Chart.yaml
                         cat ./final-pj1/values.yaml
                         git config --global --add safe.directory ${WORKSPACE}
