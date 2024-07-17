@@ -65,12 +65,12 @@ pipeline {
         //             }
         //         }
         //     }
-            post {
-                always {
-                    junit 'test-result.xml'
-                }
-            }
-        }
+        //     post {
+        //         always {
+        //             junit 'test-result.xml'
+        //         }
+        //     }
+        // }
 
 
         stage("Create Merge request") {
