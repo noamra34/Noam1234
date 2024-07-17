@@ -4,7 +4,8 @@ from flask.testing import FlaskClient
 from pymongo import MongoClient
 from bson import ObjectId
 import mongomock
-import flask_application as app
+import app
+
 
 @pytest.fixture
 def client(monkeypatch):

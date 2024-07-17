@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 import datetime
 from bson.objectid import ObjectId
 import mongomock
-#
+
 load_dotenv()
 DB_USR = environ.get('DB_USR')
 DB_PSW = environ.get('DB_PSW')
@@ -28,7 +28,8 @@ if is_testing:
     app.config["SESSION_MONGODB_COLLECT"] = "sessions"
     Session(app)     
 #config the session to the db
-
+users_collection = db.users
+products_collection = db.products
 @app.route('/')
 def index():
     return render_template('index.html')
