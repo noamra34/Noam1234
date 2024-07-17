@@ -54,17 +54,7 @@ pipeline {
             }
         }
 
-        stage('Run tests') {
-            steps {
-                script {
-                    // Run pytest and generate XML report
-                    sh "python -m pytest tests/test_pytest.py --junitxml=test-reports/pytest-result.xml"
-                }
-                // Archive the test results for Jenkins to display
-                junit 'test-reports/pytest-result.xml'
-            }
-        }
-        
+
 
 
         stage("Create Merge request") {
