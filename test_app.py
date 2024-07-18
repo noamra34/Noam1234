@@ -129,33 +129,18 @@
     
     
 import pytest
-from flask import session
-from app import start_app  # Make sure to adjust the import based on your actual file structure
-import mongomock
+from app import start_app
 from bson.objectid import ObjectId
 import bcrypt
 
 @pytest.fixture
-def client(monkeypatch):
-    # Setup: initialize app with mongomock client
-    mock_client = mongomock.MongoClient()
-
-    def mock_start_app(if_testing=None):
-        if if_testing is None:
-            if_testing = {}
-        if_testing['MONGO_CLIENT'] = mock_client  # Set the mongomock client
-        return start_app(if_testing=if_testing)
-
-    monkeypatch.setattr('app.start_app', mock_start_app)
-    
-    # Initialize the app with the mock_start_app function
-    app = mock_start_app({'MONGO_CLIENT': mock_client})
+def client():
+    app = start_app()
     app.config['TESTING'] = True
-    app.config['SECRET_KEY'] = 'test_secret_key'
-    
+
     with app.test_client() as client:
         with app.app_context():
-            # Create collections and insert initial data for testing
+            # Initialize your MongoDB with test data if needed
             db = app.db
             db.users.insert_one({
                 '_id': ObjectId('60f6e7d7b1d41c5f2cae8b79'),
@@ -169,10 +154,8 @@ def client(monkeypatch):
                 {'_id': ObjectId('60f6e7d7b1d41c5f2cae8b81'), 'name': 'Product2', 'price': 20, 'kind': 'type2'}
             ])
         yield client
+
 def test_index(client):
     response = client.get('/')
     assert response.status_code == 200
     assert b'Welcome' in response.data  # Adjust this assertion based on your actual index.html content
-
-if __name__ == "__main__":
-    pytest.main()

@@ -60,10 +60,14 @@ pipeline {
                     // Install Docker Compose if necessary
                     
                     // Bring up containers using Docker Compose
-                    sh "docker-compose -f docker-compose.yaml up -d"
+                    sh """
+                        docker-compose -f docker-compose.yaml up -d
+                        docker-compose exec app pytest
+                    """
                 }
             }
         }
+
         stage('Cleanup') {
             steps {
                 script {
