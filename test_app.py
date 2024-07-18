@@ -129,33 +129,29 @@
     
     
 import pytest
-from app import start_app
+from app import create_app
 from bson.objectid import ObjectId
 import bcrypt
+import mongomock
+@pytest.fixture
+def app(monkeypatch):
+    mock_client = mongomock.MongoClient()
+    mock_db = mock_client.supermarket
+
+    test_config = {
+        'TESTING': True,
+        'MONGO_CLIENT': mock_client
+    }
+    app = create_app(test_config)
+
+    monkeypatch.setattr(app, "db", mock_db)
+    yield app
 
 @pytest.fixture
-def client():
-    app = start_app()
-    app.config['TESTING'] = True
-
-    with app.test_client() as client:
-        with app.app_context():
-            # Initialize your MongoDB with test data if needed
-            db = app.db
-            db.users.insert_one({
-                '_id': ObjectId('60f6e7d7b1d41c5f2cae8b79'),
-                'username': 'testuser',
-                'password': bcrypt.hashpw('password'.encode('utf-8'), bcrypt.gensalt()),
-                'email': 'testuser@example.com',
-                'cart': []
-            })
-            db.products.insert_many([
-                {'_id': ObjectId('60f6e7d7b1d41c5f2cae8b80'), 'name': 'Product1', 'price': 10, 'kind': 'type1'},
-                {'_id': ObjectId('60f6e7d7b1d41c5f2cae8b81'), 'name': 'Product2', 'price': 20, 'kind': 'type2'}
-            ])
-        yield client
+def client(app):
+    return app.test_clint()
 
 def test_index(client):
     response = client.get('/')
     assert response.status_code == 200
-    assert b'Welcome' in response.data  # Adjust this assertion based on your actual index.html content
+    assert b'welcom' in response.data

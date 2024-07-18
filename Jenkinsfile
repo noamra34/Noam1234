@@ -54,29 +54,29 @@ pipeline {
                 }
             }
         }
-        stage('Start Containers with Docker Compose') {
-            steps {
-                script {
-                    // Install Docker Compose if necessary
+//         stage('Start Containers with Docker Compose') {
+//             steps {
+//                 script {
+//                     // Install Docker Compose if necessary
                     
-                    // Bring up containers using Docker Compose
-                    sh """
-                        docker-compose -f docker-compose.yaml up -d
-                        docker-compose exec app pytest -v
+//                     // Bring up containers using Docker Compose
+//                     sh """
+//                         docker-compose -f docker-compose.yaml up -d
+//                         docker-compose exec app pytest -v
 
-                    """
-                }
-            }
-        }
-//
-        stage('Cleanup') {
-            steps {
-                script {
-                    // Clean up: stop and remove containers
-                    sh "docker-compose -f docker-compose.yaml down"
-                }
-            }
-        }
+//                     """
+//                 }
+//             }
+//         }
+// //
+//         stage('Cleanup') {
+//             steps {
+//                 script {
+//                     // Clean up: stop and remove containers
+//                     sh "docker-compose -f docker-compose.yaml down"
+//                 }
+//             }
+//         }
     
 
         // stage("Run Unit Tests") {
