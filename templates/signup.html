@@ -27,7 +27,7 @@
 </body>
 </html>
  -->
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
  <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -64,5 +64,60 @@
         <button type="submit">Sign Up</button>
     </form>
     <p>{{ message }}</p>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='signup.css') }}">
+</head>
+<body>
+    <div class="toolbar">
+        <h1>Supermarket</h1>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Sign Up</h1>
+        </header>
+
+        <main>
+            <form method="POST" action="{{ url_for('signup') }}">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone_number">Phone Number:</label>
+                    <input type="text" id="phone_number" name="phone_number" required>
+                </div>
+                <h2>Just one click and you can select Products</h2>
+                {% for product in products %}
+                <div class="form-group">
+                    <input type="checkbox" name="quantity_{{ product._id }}" value="1">
+                    <label>{{ product.name }} - ${{ product.price }}</label>
+                </div>
+                {% endfor %}
+                <button type="submit">Sign Up</button>
+            </form>
+            <p>{{ message }}</p>
+            <div class="center">
+                <a href="{{ url_for('index') }}">Go Back To Home Page</a>
+            </div>
+        </main>
+    </div>
 </body>
 </html>

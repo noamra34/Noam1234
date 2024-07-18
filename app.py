@@ -10,26 +10,25 @@ import datetime
 from bson.objectid import ObjectId
 import mongomock
 
+
+app = Flask(__name__)
+SESSION_KEY = environ.get('SESSION_KEY')
 load_dotenv()
 DB_USR = environ.get('DB_USR')
 DB_PSW = environ.get('DB_PSW')
 DB_HOST = environ.get('DB_HOST')
 DB_NAME = environ.get('DB_NAME')
-SESSION_KEY = environ.get('SESSION_KEY')
 MONGO_URI = (f"mongodb://{DB_USR}:{DB_PSW}@{DB_HOST}:27017/supermarket")
 client = MongoClient(MONGO_URI)
+
 db = client.supermarket
-app = Flask(__name__)
-is_testing = True
-if is_testing:
-    app.config["SESSION_TYPE"] = "mongodb"
-    app.config["SESSION_MONGODB"] = client
-    app.config["SESSION_MONGODB_DB"] = DB_NAME
-    app.config["SESSION_MONGODB_COLLECT"] = "sessions"
-    Session(app)     
+
+app.config["SESSION_TYPE"] = "mongodb"
+app.config["SESSION_MONGODB"] = client
+app.config["SESSION_MONGODB_DB"] = DB_NAME
+app.config["SESSION_MONGODB_COLLECT"] = "sessions"
+Session(app)     
 #config the session to the db
-users_collection = db.users
-products_collection = db.products
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -47,6 +46,9 @@ def signup():
         phone_number = request.form.get('phone_number')
         if not (username and password and email):
             return render_template('signup.html', message="All fields are required")
+        
+        if phone_number and not (phone_number.isdigit() and len(phone_number) == 10):
+            return render_template('signup.html', message="please enter your phone number")
         
         existing_user = db.users.find_one({'email': email})
         if existing_user:

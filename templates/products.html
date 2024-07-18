@@ -71,6 +71,10 @@
     <link rel="stylesheet" href="/static/products.css">
 </head>
 <body>
+    <div class="toolbar">
+        <h1>Supermarket</h1>
+    </div>
+
     <h1>Products</h1>
     <form method="POST" action="{{ url_for('add_products') }}">
         {% for product in products %}
@@ -81,8 +85,6 @@
         {% endfor %}
         <button type="submit">Add to Cart</button>
     </form>
+    <a href="{{ url_for('cash_register') }}" class="cash-register-button">Go to Cash Register</a>
 </body>
 </html>
-
-
-

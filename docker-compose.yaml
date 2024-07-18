@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  app:
+    image: noam476/final-project:23 # Use a variable for the image tag
+    ports:
+      - "5001:5000"
+    environment:
+      - DB_HOST=mongodb
+      - DB_PORT=27017
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_DATABASE=supermarket
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
+    
