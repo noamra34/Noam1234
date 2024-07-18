@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: flask-app-pods-rule
+  namespace: monitoring
+  labels:
+    release: my-prometheus-stack
+spec:
+  groups:
+  - name: pods
+    rules:
+    - alert: LessThan3Pods
+      expr: count(up{app_kubernetes_io_name="flask-app-.*",job="kube-state-metrics",namespace="default"}) < 3
+      for: 3m
+      labels:
+        severity: critical
+      annotations:
+        summary: Less than 3 pods running for Flask application
+        description: "There are fewer than 3 pods running for the Flask application. Investigate and scale up if necessary."

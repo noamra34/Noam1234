@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}"> -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -63,6 +64,9 @@
     </style>
 </head>
 <body>
+    <div class="toolbar">
+        <h1>Supermarket</h1>
+    </div>
     <div class="login-container">
         <h2>Login</h2>
         <form action="/login" method="post">

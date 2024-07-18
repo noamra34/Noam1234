@@ -8,7 +8,7 @@ pipeline {
 //hello
     environment {
         DOCKER_IMAGE_NAME = "noam476/final-project"
-        IMAGE_TAG = "latest"
+        IMAGE_TAG = "1.0.${BUILD_NUMBER}"
         HELM_CHART_NAME = "final-pj1"
         DOCKERHUB_CRED = credentials('docker_final_project')
         GIT_CREDENTIAL_ID = credentials('git_final_project')
@@ -53,6 +53,27 @@ pipeline {
                 }
             }
         }
+        stage('Start Containers with Docker Compose') {
+            steps {
+                script {
+                    // Install Docker Compose if necessary
+                    sh "sudo curl -L \"https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose"
+                    sh "sudo chmod +x /usr/local/bin/docker-compose"
+                    
+                    // Bring up containers using Docker Compose
+                    sh "docker-compose -f docker-compose.yaml up -d"
+                }
+            }
+        }
+        stage('Cleanup') {
+            steps {
+                script {
+                    // Clean up: stop and remove containers
+                    sh "docker-compose -f docker-compose.yaml down"
+                }
+            }
+        }
+    
 
         // stage("Run Unit Tests") {
         //     steps {
@@ -141,83 +162,6 @@ pipeline {
                 }
             }
         }
-        ///
+        
     }
-    ///
-// sed -i 's/^  tag: .*/  tag: ${BUILD_NUMBER}/' ./final-pj1/values.yaml
-//cat ./final-pj1/values.yaml
-// git add ./final-pj1/values.yaml
-    // post {
-    //     when{
-    //         expression {
-    //                 return env.BRANCH_NAME == 'main'
-    //             }
-    //     }
-    //     success {
-    //         script {
-    //             // Check if the latest commit message contains [ci skip]
-    //             def skipCI = sh(returnStatus: true, script: "git log -1 --pretty=%B | grep -q '\\[ci skip\\]'") == 0
-    //             if (!skipCI) {
-    //                 // Trigger ArgoCD sync using CLI or API
-    //                 sh "argocd app sync <your-application-name> --wait"
-    //             } else {
-    //                 echo "Skipping ArgoCD sync due to [ci skip] in commit message."
-    //             }
-    //         }
-    //     }
-    // }
-    // post {
-    //     success {
-    //         script {
-    //             def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
-    //             echo "Commit message: ${commitMessage}"
-                
-    //             // Check if the commit message contains [ci skip] (case insensitive)
-    //             def skipCI = commitMessage =~ /(?i)\[ci skip\]/
-                
-    //             if (skipCI) {
-    //                 currentBuild.result = 'SUCCESS'
-    //                 error("Skipping build due to [ci skip] in commit message.")
-    //             }
-    //         }
-    //     }
-    // }
-
 }
-
-    // post {
-    //     failure {
-    //         emailext subject: "Failed: ${currentBuild.fullDisplayName}",
-    //                     body: "Build failed: ${env.BUILD_URL}",
-    //                     to: "noamra34@gmail.com"
-    //     }
-    // }
-    // stage("Unit Test") {
-        //     steps {
-        //         script { 
-        //             // sh "docker run -d -p 5000:5000 --name flaskapp ${DOCKER_IMAGE_NAME}"
-        //             // sh 'docker exec flaskapp pytest <test_file>'
-        //             sh 'pytest --junitxml=test-result.xml'
-        //         }
-        //         post {
-        //             always {
-        //                 junit 'test-result.xml'
-        //             }
-        //         }
-        //     }
-        // }
-        // stage("Update Chart.yaml in Main Branch") {
-        //     when {
-        //         expression {
-        //             return env.BRANCH_NAME == 'main'
-        //         }
-        //     }
-        //     when {
-        //         beforeAgent true
-        //         expression {
-        //             // Check if there's a tag indicating we should proceed
-        //             return sh(script: "git tag --list 'update-chart-*'", returnStatus: true) == 0
-        //         }
-        //     }
-        // }        
-
