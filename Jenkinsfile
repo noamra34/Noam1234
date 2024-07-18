@@ -62,7 +62,8 @@ pipeline {
                     // Bring up containers using Docker Compose
                     sh """
                         docker-compose -f docker-compose.yaml up -d
-                        docker-compose exec app pytest
+                        docker-compose exec app pytest -v
+
                     """
                 }
             }
