@@ -11,7 +11,7 @@ from bson.objectid import ObjectId
 import mongomock
 
 
-app = Flask(__name__)
+
 SESSION_KEY = environ.get('SESSION_KEY')
 load_dotenv()
 DB_USR = environ.get('DB_USR')
@@ -23,6 +23,7 @@ client = MongoClient(MONGO_URI)
 
 db = client.supermarket
 
+app = Flask(__name__)
 app.config["SESSION_TYPE"] = "mongodb"
 app.config["SESSION_MONGODB"] = client
 app.config["SESSION_MONGODB_DB"] = DB_NAME
