@@ -47,6 +47,8 @@ This project is a supermarket application deployed using Kubernetes and managed 
     ```sh
     kubectl -n argocd port-forward svc/argocd-server 8081:443
     ```
+    username: admin
+    password: adminpassword
 4. **Prometheus Dashbord:**
     ```sh
     kubectl -n monitoring port-forward svc/prometheus-operated 9090:9090
