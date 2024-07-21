@@ -1,4 +1,5 @@
 # Supermarket Application
+The goal of the above project is to help the user calculate the amount he has to pay at the supermarket for all the products he wants to buy, the project consists of all kinds of elements.
 
 This project is a supermarket application deployed using Kubernetes and managed with Helm. The application consists of multiple namespaces, each serving a distinct purpose, including application deployment, CI/CD, continuous deployment, and monitoring.
 
