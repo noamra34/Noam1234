@@ -83,7 +83,7 @@ def login():
                 return redirect(url_for('products'))
             else:
                 return redirect('invalid')
-        return redirect('signup')
+        return redirect('invalid')
     return render_template('login.html')
 
 #products
@@ -172,41 +172,6 @@ def cash_register():
 def logout():
     session.clear()  # Clear all session variables
     return redirect(('/'))
-
-            
-                    
-            
-
-        # @app.route('/submit', methods=['POST'])
-        # @jwt_required()
-        # def submit():
-        #     current_user_id = get_jwt_identity()
-        #     selected_product_ids = request.form.getlist('selected_products')
-            
-        #     # Retrieve user document from MongoDB
-        #     user = db.users.find_one({'_id': ObjectId(current_user_id)})
-            
-        #     if not user:
-        #         return jsonify({'msg': 'User not found'}), 404
-            
-        #     selected_products = []
-        #     total_price = 0.0
-            
-        #     # Fetch details of selected products from MongoDB
-        #     for product_id in selected_product_ids:
-        #         product = db.products.find_one({'_id': ObjectId(product_id)})
-        #         if product:
-        #             selected_products.append({
-        #                 'product_name': product.get('product_name'),
-        #                 'price': product.get('price'),
-        #                 'category': product.get('category')
-        #             })
-        #             total_price += float(product.get('price', 0.0))
-            
-        #     # Update selected_products field in user document
-        #     db.users.update_one({'_id': ObjectId(current_user_id)}, {'$set': {'selected_products': selected_products}})
-            
-        #     return render_template('submit.html', selected_products=selected_products, total_price=total_price)
 
 
 
