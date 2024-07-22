@@ -37,6 +37,12 @@ h2 {
     color: #333;
 }
 
+.welcome-message {
+    font-size: 1.2em;
+    color: #28a745;
+    margin-top: 10px;
+}
+
 .center {
     text-align: center;
 }
@@ -65,6 +71,17 @@ h2 {
     margin: 0 auto 20px auto;
     max-width: 100%;
     height: auto;
+    transform: translateX(-100%);
+    animation: slideIn 1s forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
 }
 
 .inline-form {
