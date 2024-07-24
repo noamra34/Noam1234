@@ -54,44 +54,6 @@ pipeline {
                 }
             }
         }
-//         stage('Start Containers with Docker Compose') {
-//             steps {
-//                 script {
-//                     // Install Docker Compose if necessary
-                    
-//                     // Bring up containers using Docker Compose
-//                     sh """
-//                         docker-compose -f docker-compose.yaml up -d
-//                         docker-compose exec app pytest -v
-
-//                     """
-//                 }
-//             }
-//         }
-// //
-//         stage('Cleanup') {
-//             steps {
-//                 script {
-//                     // Clean up: stop and remove containers
-//                     sh "docker-compose -f docker-compose.yaml down"
-//                 }
-//             }
-//         }
-    
-
-        // stage("Run Unit Tests") {
-        //     steps {
-        //         script {
-        //             dockerImage.inside {
-        //                 sh """
-        //                     ls
-        //                     pytest -q
-        //                 """
-        //             }
-        //         }
-        //     }
-
-
         stage("Create Merge request") {
             when {
                 expression {
@@ -131,13 +93,6 @@ pipeline {
                 }
             }
         }
-        // stage("Build Helm Package") {
-        //     when {
-        //         expression {
-        //             return env.BRANCH_NAME == 'main'
-        //         }
-        //     }
-        //
         stage("Update Chart.yaml in Main Branch") {
             when {
                 expression {

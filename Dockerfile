@@ -21,7 +21,7 @@ RUN pip install pymongo
 EXPOSE 5000
 
 # Set environment variables
-NV FLASK_APP=app.py
+ENV FLASK_APP=appp.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
 # Run the Flask application
