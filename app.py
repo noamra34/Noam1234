@@ -1,14 +1,10 @@
 from flask import Flask, request, jsonify, render_template, redirect,url_for, session
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
-from werkzeug.security import generate_password_hash, check_password_hash
 from flask_session import Session
 from pymongo import MongoClient
 from os import environ 
 import bcrypt
 from dotenv import load_dotenv
-import datetime
 from bson.objectid import ObjectId
-import mongomock
 
 
 
