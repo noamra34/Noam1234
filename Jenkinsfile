@@ -168,9 +168,9 @@ pipeline {
         }
         
     }
-    post {
-        failure {
-            cleanWs()
-        }
-    }
+    // post {
+    //     failure {
+    //         cleanWs()
+    //     }
+    // }
 }
