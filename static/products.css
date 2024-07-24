@@ -13,12 +13,14 @@ body {
 
 .container {
   width: 80%;
-  max-width: 600px;
+  max-width: 1000px; /* Increased width for more space */
   margin: 0 auto;
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Scroll if content overflows */
+  max-height: 80vh; /* Limits height to ensure scroll */
 }
 
 h2 {
@@ -27,12 +29,30 @@ h2 {
 }
 
 .product-list {
-  list-style-type: none;
-  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between products */
 }
 
-.product-list li {
-  margin-bottom: 10px;
+.product-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.product-image {
+  width: 100px; /* Adjust the size as needed */
+  height: auto;
+  margin-right: 20px;
+}
+
+.product-details {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Allows the details to take up remaining space */
 }
 
 button {
@@ -73,4 +93,8 @@ a:hover {
 
 .main-page-button:hover {
   text-decoration: underline;
+}
+
+.cash-register-button {
+  margin-top: 10px;
 }
