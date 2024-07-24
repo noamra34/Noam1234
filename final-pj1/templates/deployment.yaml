@@ -25,3 +25,8 @@ spec:
               value: noam123456789
             - name: DB_HOST
               value: mongodb
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
