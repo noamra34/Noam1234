@@ -15,7 +15,7 @@ WORKDIR /app
 
 # Copy the rest of the application code into the container
 COPY . .
-RUN pip install --default-timeout=100 --no-cache-dir -r requirements.txt
+UN pip install --default-timeout=100 --no-cache-dir -r requirements.txt
 RUN pip install pymongo
 # Expose the port the app runs on
 EXPOSE 5000
@@ -25,4 +25,4 @@ ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
 # Run the Flask application
-CMD ["python", "-m", "flask", "run"
+CMD ["python", "-m", "flask", "run"]
